@@ -155,7 +155,7 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
 ```
 ```{css, echo=FALSE}
 .highcharts-container  {
-    background-color: #5B9BD5;
+    background-color: #19769E;
     width: 1046px;
     height: 880px;
 }
