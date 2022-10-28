@@ -1,0 +1,182 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(sharepointr)
+library(tidyr)
+library(dplyr)
+library(plyr)
+library(highcharter)
+
+
+getdatasharepointlist <- function (con, listName = NULL, listID = NULL, expand = F)
+{
+  if ((is.null(listName) && is.null(listID)) || (!is.null(listName) &&
+                                                 !is.null(listID)))
+    stop("Either listName or listID must be provided")
+  response = sp_getListColumns(con, listName = listName, listID = listID,
+                               raw = T, hidden = F)
+  if (response$status_code == 200) {
+    columnNamesInternal = if (con$Office365)
+      response$content$value$InternalName[!response$content$value$FromBaseType |
+                                            response$content$value$InternalName == "Title"]
+    else response$content$d$results$InternalName
+    columnNames = if (con$Office365)
+      response$content$value$Title[!response$content$value$FromBaseType |
+                                     response$content$value$InternalName == "Title"]
+    else response$content$d$results$Title
+    types = if (con$Office365)
+      response$content$value$TypeAsString[!response$content$value$FromBaseType |
+                                            response$content$value$InternalName == "Title"]
+    else response$content$d$results$TypeAsString
+    response = sp_request(con, URLencode(paste0("lists/",
+                                                if (!is.null(listName))
+                                                  paste0("getbytitle('", listName)
+                                                else paste0("getbyid('", listID), "')/items?$top=1000")))
+    if (response$status_code == 200) {
+      data = data.frame()
+
+      repeat ({
+        if (expand && !is.null(unname(unlist(if (con$Office365) response$content$value$FieldValuesAsText else response$content$d$results$FieldValuesAsText)))) {
+          items = unname(unlist(if (con$Office365)
+            response$content$value$FieldValuesAsText
+            else response$content$d$results$FieldValuesAsText))
+          data_temp = Reduce(rbind, lapply(items, function(item) {
+            response = sp_request(con, item)
+            if (response$status_code == 200) {
+              names(response$content$d) = gsub("_x005f",
+                                               "", names(response$content$d))
+              data = as.data.frame(t(data.frame(unlist(response$content$d[columnNamesInternal]))))
+              rownames(data) = NULL
+              colnames(data) = columnNames[columnNamesInternal %in%
+                                             colnames(data)]
+              return(data)
+            }
+          }))
+        }
+        else {
+          data_temp = as.data.frame(if (con$Office365)
+            response$content$value
+            else response$content$d$results)
+          colnames(data_temp) = gsub("^OData_", "",
+                                     colnames(data_temp))
+          columnNamesInternal_temp = paste0(columnNamesInternal,
+                                            ifelse(types == "User", "Id", ""))
+          data_temp = data_temp[, columnNamesInternal_temp]
+          colnames(data_temp) = make.names(columnNames[columnNamesInternal_temp %in%
+                                                         colnames(data_temp)])
+        }
+        data = if (nrow(data) == 0)
+          data.frame(data_temp)
+        else rbind(data.frame(c(data, sapply(colnames(data_temp)[!make.names(colnames(data_temp)) %in%
+                                                                   colnames(data)], function(x) NA))), data.frame(c(data_temp,
+                                                                                                                    sapply(colnames(data)[!colnames(data) %in%
+                                                                                                                                            make.names(colnames(data_temp))], function(x) NA))))
+        if (!is.null(if (con$Office365) response$content$odata.nextLink else response$content$d$`__next`)) {
+          response = sp_request(con, if (con$Office365)
+            response$content$odata.nextLink
+            else response$content$d$`__next`)
+          if (response$status_code != 200)
+            stop("Invalid response.")
+        }
+        else {
+          break
+        }
+      })
+
+      colnames(data) <- columnNames[make.names(columnNames) %in%
+                                      colnames(data)]
+      return(data)
+    }
+  }
+}
+
+
+
+ conn <- sp_connection("https://tradeeconomics.sharepoint.com/sites/Projects", Username = "analytics@tradeeconomics.com", Password = "An@lytic$",
+                      credentialFile = NULL, Office365 = T)
+
+CountryInfo <-  getdatasharepointlist(conn, listName = "Country List", listID = NULL, expand = F)
+
+
+CountryInfo <- as.data.frame(CountryInfo)
+
+
+
+
+elements <- getdatasharepointlist(conn, listName = "Project List", listID = NULL, expand = F)
+
+elements <- elements %>% select(c("Ref No.", "Country / Group of Countries", "Categorization for website"))
+
+names(elements) <- c("refno","country","category")
+
+
+elements <- elements %>% mutate(country = gsub('.*\\(',"",country))
+elements <- elements %>% mutate(country = gsub(")","",country))
+elements <- elements %>% mutate(country = gsub('"',"",country))
+
+elements <- elements %>% mutate(category = gsub('.*\\(',"",category))
+elements <- elements %>% mutate(category = gsub(")","",category))
+elements <- elements %>% mutate(category = gsub('"',"",category))
+
+elements <- elements %>%
+  mutate(country = strsplit(as.character(country), ",")) %>%
+  unnest(country)
+
+elements$country <-  trimws(elements$country)
+
+elements$CountryName <- as.character(elements$country)
+
+elements$category <-  as.character(elements$category )
+
+elements <- elements %>%
+  mutate(category = strsplit(as.character(category), ",")) %>%
+  unnest(category)
+
+
+elements$category <- trimws(elements$category)
+
+#Filter by category or comment filter to get map for all projects
+# elements <- elements %>% filter(category == 'COVID-19 Recovery')
+# elements <- elements %>% filter(category == 'E-Commerce and Digital Trade')
+# elements <- elements %>% filter(category == 'Impact Assessment')
+# elements <- elements %>% filter(category == 'International Business Strategy')
+# elements <- elements %>% filter(category == 'Policy and Negotiations')
+
+
+elements <- merge(x = elements, y = CountryInfo, by.x = "CountryName",by.y="Country", all.x = TRUE)
+
+
+elements <- elements %>% select(c("CountryName","refno","category","ISO3"))
+
+
+el <- plyr::count(elements, c("ISO3","CountryName"))
+
+
+
+```
+```{css, echo=FALSE}
+.highcharts-container  {
+    background-color: #5B9BD5;
+    width: 1046px;
+    height: 880px;
+}
+
+.highcharts-credits {
+display: none;
+}
+```
+
+
+```{r pressure, echo=FALSE}
+
+hcmap(
+  "https://code.highcharts.com/mapdata/custom/world-lowres.js",
+  data = el,
+  value = "freq",
+  joinBy = c("iso-a3", "ISO3"),
+  borderColor = "#FFFFFF",
+  borderWidth = 0.5,
+  color = "#e2e2e2"
+) %>%  hc_legend(enabled = FALSE) %>% hc_colorAxis(minColor = "#D6F4FF", maxColor = "#0291da") %>%
+  hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#052026"))
+```
+
