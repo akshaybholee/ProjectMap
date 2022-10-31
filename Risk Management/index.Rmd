@@ -91,8 +91,9 @@ getdatasharepointlist <- function (con, listName = NULL, listID = NULL, expand =
 
 
 
- conn <- sp_connection("https://tradeeconomics.sharepoint.com/sites/Projects", Username = "analytics@tradeeconomics.com", Password = "An@lytic$",
+ conn <- sp_connection("https://tradeeconomics.sharepoint.com/sites/Projects", Username = "analytics@tradeeconomics.com", Password = "Vud54719",
                       credentialFile = NULL, Office365 = T)
+
 
 CountryInfo <-  getdatasharepointlist(conn, listName = "Country List", listID = NULL, expand = F)
 
@@ -104,15 +105,19 @@ CountryInfo <- as.data.frame(CountryInfo)
 
 elements <- getdatasharepointlist(conn, listName = "Project List", listID = NULL, expand = F)
 
-elements <- elements %>% select(c("Ref No.", "Country / Group of Countries", "Categorization for website"))
+elements0 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "Categorization for website"))
+elements1 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "2 Categorization for website"))
+names(elements0) <- c("refno","country","category")
+names(elements1) <- c("refno","country","category")
 
+elements <- rbind(elements0,elements1)
 names(elements) <- c("refno","country","category")
 
 
 elements <- elements %>% mutate(country = gsub('.*\\(',"",country))
 elements <- elements %>% mutate(country = gsub(")","",country))
 elements <- elements %>% mutate(country = gsub('"',"",country))
-
+# 
 elements <- elements %>% mutate(category = gsub('.*\\(',"",category))
 elements <- elements %>% mutate(category = gsub(")","",category))
 elements <- elements %>% mutate(category = gsub('"',"",category))
@@ -135,8 +140,8 @@ elements <- elements %>%
 elements$category <- trimws(elements$category)
 
 #Filter by category or comment filter to get map for all projects
-# elements <- elements %>% filter(category == 'COVID-19 Recovery')
-# elements <- elements %>% filter(category == 'E-Commerce and Digital Trade')
+# elements <- elements %>% filter(category == 'MEL')
+elements <- elements %>% filter(category == 'Risk Management')
 # elements <- elements %>% filter(category == 'Impact Assessment')
 # elements <- elements %>% filter(category == 'International Business Strategy')
 # elements <- elements %>% filter(category == 'Policy and Negotiations')
@@ -154,11 +159,27 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
 
 ```
 ```{css, echo=FALSE}
-.highcharts-container  {
-    background-color: #5B9BD5;
-    width: 1046px;
-    height: 880px;
+.container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+    margin-right: auto;
+    margin-left: auto;
 }
+
+.main-container {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.html-widget {
+    margin-bottom: 0px;
+}
+
+.highcharts-container  {
+    background-color: #b3d6e2;
+}
+
 
 .highcharts-credits {
 display: none;
@@ -176,7 +197,7 @@ hcmap(
   borderColor = "#FFFFFF",
   borderWidth = 0.5,
   color = "#e2e2e2"
-) %>%  hc_legend(enabled = FALSE) %>% hc_colorAxis(minColor = "#D6F4FF", maxColor = "#0291da") %>%
+) %>%  hc_legend(enabled = TRUE, title = list(text = "Number of Projects")) %>% hc_colorAxis(minColor = "#D6F4FF", maxColor = "#0291da") %>%
   hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#052026"))
 ```
 
