@@ -1,3 +1,4 @@
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(sharepointr)
@@ -91,7 +92,7 @@ getdatasharepointlist <- function (con, listName = NULL, listID = NULL, expand =
 
 
 
- conn <- sp_connection("https://tradeeconomics.sharepoint.com/sites/Projects", Username = "analytics@tradeeconomics.com", Password = "Vud54719",
+ conn <- sp_connection("https://tradeeconomics.sharepoint.com/sites/Projects", Username = "analytics@tradeeconomics.com", Password = "Pog48797",
                       credentialFile = NULL, Office365 = T)
 
 
@@ -166,6 +167,7 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
+    background-color: #b3d6e2;
 }
 
 .html-widget {
@@ -183,8 +185,12 @@ display: none;
 ```
 
 
-```{r pressure, echo=FALSE}
 
+<div style= "display: flex; align-items: center;">
+# All Projects
+
+
+```{r pressure, echo=FALSE}
 hcmap(
   "https://code.highcharts.com/mapdata/custom/world-lowres.js",
   data = el,
@@ -194,6 +200,9 @@ hcmap(
   borderWidth = 0.5,
   color = "#e2e2e2"
 ) %>%  hc_legend(enabled = TRUE, title = list(text = "Number of Projects")) %>% hc_colorAxis(minColor = "#D6F4FF", maxColor = "#0291da") %>%
-  hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#052026"))
+  hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#052026")) %>%
+  hc_size(900,600)
+
 ```
+</div>
 
