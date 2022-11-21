@@ -156,6 +156,7 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
 
 ```
 ```{css, echo=FALSE}
+
 .container-fluid {
     padding-right: 0px;
     padding-left: 0px;
@@ -167,27 +168,41 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
-    background-color: #b8e3ff;
+    background-color: #003366;
 }
+
+
 
 .html-widget {
     margin-bottom: 0px;
 }
 
 .highcharts-container  {
-    background-color: #b8e3ff;
+    background-color: #003366;
 }
 
 
 .highcharts-credits {
 display: none;
 }
+
 ```
 
 
 
+
+
 <div style= "display: flex; align-items: center;">
-# All Projects
+
+
+
+<h1 style="
+    width: 300px;
+    margin-left: 20px;
+    color: white;
+">
+All Projects
+</h1>
 
 
 ```{r pressure, echo=FALSE}
@@ -197,10 +212,19 @@ hcmap(
   value = "freq",
   joinBy = c("iso-a3", "ISO3"),
   borderColor = "#FFFFFF",
-  borderWidth = 0.5,
-  color = "#e2e2e2"
-) %>%  hc_legend(enabled = TRUE, title = list(text = "Number of Projects")) %>% hc_colorAxis(minColor = "#66E3DA", maxColor = "#113D80") %>%
-  hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#052026")) %>%
+  borderWidth = 0.35,
+  color = "#ffffff"
+) %>%  hc_legend(enabled = TRUE, 
+                 title = list(text = "Number of Projects", style = list(color = "#ffffff"))) %>% 
+  hc_colorAxis(minColor = 
+                 "#86cefa"
+               , 
+               maxColor = 
+                 "#003396"
+               , labels = list(style = list(color= "#FFFFFF"))) %>%
+  hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#e1e1e1"
+                                                                                                                      # "#052026"
+                                                                                                                    )) %>%
   hc_size(900,600)
 
 ```
