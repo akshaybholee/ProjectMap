@@ -167,7 +167,7 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
-    background-color: #b3d6e2;
+    background-color: #b8e3ff;
 }
 
 .html-widget {
@@ -175,7 +175,7 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
 }
 
 .highcharts-container  {
-    background-color: #b3d6e2;
+    background-color: #b8e3ff;
 }
 
 
@@ -199,7 +199,7 @@ hcmap(
   borderColor = "#FFFFFF",
   borderWidth = 0.5,
   color = "#e2e2e2"
-) %>%  hc_legend(enabled = TRUE, title = list(text = "Number of Projects")) %>% hc_colorAxis(minColor = "#D6F4FF", maxColor = "#0291da") %>%
+) %>%  hc_legend(enabled = TRUE, title = list(text = "Number of Projects")) %>% hc_colorAxis(minColor = "#66E3DA", maxColor = "#113D80") %>%
   hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#052026")) %>%
   hc_size(900,600)
 
