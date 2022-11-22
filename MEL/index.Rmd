@@ -226,7 +226,11 @@ hcmap(
     # "#000000"
     "#ffffff"
 ) %>%  hc_legend(enabled = TRUE, 
-                 title = list(text = "Number of Projects", style = list(color = 
+                 align = "right",
+    verticalAlign = "middle",
+    layout = "vertical",
+   margin = 50,
+                 title = list(text = "Number of<br/>Projects<br/>", style = list(color = 
                                                                           # "#000000"
                                                                           "#ffffff"
                                                                         ))) %>% 
