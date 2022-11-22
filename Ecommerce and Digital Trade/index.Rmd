@@ -91,11 +91,12 @@ getdatasharepointlist <- function (con, listName = NULL, listID = NULL, expand =
 
 
 
- conn <- sp_connection("https://tradeeconomics.sharepoint.com/sites/Projects", Username = "analytics@tradeeconomics.com", Password = "Vud54719",
-                      credentialFile = NULL, Office365 = T)
+ # conn <- sp_connection("https://tradeeconomics.sharepoint.com/sites/Projects", Username = "analytics@tradeeconomics.com", Password = "Vud54719",
+ #                      credentialFile = NULL, Office365 = T)
 
 
-CountryInfo <-  getdatasharepointlist(conn, listName = "Country List", listID = NULL, expand = F)
+# CountryInfo <-  getdatasharepointlist(conn, listName = "Country List", listID = NULL, expand = F)
+CountryInfo <- read.csv("C:\\Users\\IEC\\Downloads\\Country List.csv")
 
 
 CountryInfo <- as.data.frame(CountryInfo)
@@ -103,10 +104,14 @@ CountryInfo <- as.data.frame(CountryInfo)
 
 
 
-elements <- getdatasharepointlist(conn, listName = "Project List", listID = NULL, expand = F)
+# elements <- getdatasharepointlist(conn, listName = "Project List", listID = NULL, expand = F)
 
-elements0 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "Categorization for website"))
-elements1 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "2 Categorization for website"))
+elements <- read.csv("C:\\Users\\IEC\\Downloads\\Project List.csv")
+
+# elements0 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "Categorization for website"))
+elements0 <- elements %>% select(c("Ref.No.", "Country...Group.of.Countries", "Categorization.for.website"))
+# elements1 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "2 Categorization for website"))
+elements1 <- elements %>% select(c("Ref.No.", "Country...Group.of.Countries", "X2.Categorization.for.website"))
 names(elements0) <- c("refno","country","category")
 names(elements1) <- c("refno","country","category")
 
@@ -117,10 +122,12 @@ names(elements) <- c("refno","country","category")
 elements <- elements %>% mutate(country = gsub('.*\\(',"",country))
 elements <- elements %>% mutate(country = gsub(")","",country))
 elements <- elements %>% mutate(country = gsub('"',"",country))
+elements <- elements %>% mutate(country = gsub('[][]',"",country))
 # 
 elements <- elements %>% mutate(category = gsub('.*\\(',"",category))
 elements <- elements %>% mutate(category = gsub(")","",category))
 elements <- elements %>% mutate(category = gsub('"',"",category))
+elements <- elements %>% mutate(category = gsub('[][]',"",category))
 
 elements <- elements %>%
   mutate(country = strsplit(as.character(country), ",")) %>%
@@ -159,6 +166,7 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
 
 ```
 ```{css, echo=FALSE}
+
 .container-fluid {
     padding-right: 0px;
     padding-left: 0px;
@@ -170,34 +178,79 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
+    background-color: #003366; /*#b8e3ff;*/ /*#eaf6f8;*/
 }
+
+
 
 .html-widget {
     margin-bottom: 0px;
+    margin-left: 100px;
 }
 
 .highcharts-container  {
-    background-color: #b3d6e2;
+    background-color: #003366; /*#b8e3ff;*/ /*#eaf6f8;*/
 }
 
 
 .highcharts-credits {
 display: none;
 }
+
 ```
 
 
-```{r pressure, echo=FALSE}
+<div style= "display: flex; align-items: center;">
 
+
+
+<h1 style="
+    width: 300px;
+    margin-left: 20px;
+    color: white;
+    /*color: #000000*/
+">
+E-Commerce and Digital Trade
+</h1>
+
+
+```{r pressure, echo=FALSE}
 hcmap(
   "https://code.highcharts.com/mapdata/custom/world-lowres.js",
   data = el,
   value = "freq",
   joinBy = c("iso-a3", "ISO3"),
   borderColor = "#FFFFFF",
-  borderWidth = 0.5,
-  color = "#e2e2e2"
-) %>%  hc_legend(enabled = TRUE, title = list(text = "Number of Projects")) %>% hc_colorAxis(minColor = "#D6F4FF", maxColor = "#0291da") %>%
-  hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = "#052026"))
-```
+  borderWidth = 0.35,
+  color = 
+    # "#000000"
+    "#ffffff"
+) %>%  hc_legend(enabled = TRUE, 
+                 title = list(text = "Number of Projects", style = list(color = 
+                                                                          # "#000000"
+                                                                          "#ffffff"
+                                                                        ))) %>% 
+  hc_colorAxis(minColor = 
+                 # "#b3e5fc"
+                 # "#97cadb"
+                 # "#00CCFF"
+                 "#86cefa"
+               , 
+               maxColor = 
+                 # "#01579b"
+                 # "#001848"
+                 # "#0700C4"
+                 "#003396"
+               , labels = list(style = list(color= 
+                                              # "#000000"
+                                              "#FFFFFF"
+                                            ))) %>%
+  hc_tooltip(crosshairs = FALSE, shared = TRUE, headerFormat = "<b>{point.name}</b>") %>% hc_plotOptions(map = list(nullColor = 
+                                                                                                                      # "#ECECEC"
+                                                                                                                      "#e1e1e1"
+                                                                                                                      # "#052026"
+                                                                                                                    )) %>%
+  hc_size(900,600)
 
+```
+</div>
