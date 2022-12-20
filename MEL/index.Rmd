@@ -206,7 +206,7 @@ display: none;
 
 <h1 style="
     width: 400px;
-    margin-left: 20px;
+    margin-left: 0px;
     color: white;
     /*color: #000000*/
 ">
