@@ -185,7 +185,7 @@ el <- plyr::count(elements, c("ISO3","CountryName"))
 
 .html-widget {
     margin-bottom: 0px;
-    margin-left: 100px;
+    margin-left: 0px;
 }
 
 .highcharts-container  {
@@ -206,7 +206,7 @@ display: none;
 
 <h1 style="
     width: 400px;
-    margin-left: 20px;
+    margin-left: 0px;
     color: white;
     /*color: #000000*/
 ">
