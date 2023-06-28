@@ -96,7 +96,7 @@ getdatasharepointlist <- function (con, listName = NULL, listID = NULL, expand =
 
 
 # CountryInfo <-  getdatasharepointlist(conn, listName = "Country List", listID = NULL, expand = F)
-CountryInfo <- read.csv("C:\\Users\\IEC\\Downloads\\Country List (1).csv")
+CountryInfo <- read.csv("C:\\Users\\IEC\\Downloads\\Country List.csv")
 
 
 CountryInfo <- as.data.frame(CountryInfo)
@@ -106,7 +106,7 @@ CountryInfo <- as.data.frame(CountryInfo)
 
 # elements <- getdatasharepointlist(conn, listName = "Project List", listID = NULL, expand = F)
 
-elements <- read.csv("C:\\Users\\IEC\\Downloads\\Project List (1).csv")
+elements <- read.csv("C:\\Users\\IEC\\Downloads\\Project List.csv")
 Region <- read.csv("C:\\Users\\IEC\\Downloads\\Regions.csv")
 
 # elements0 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "Categorization for website"))
@@ -225,11 +225,14 @@ Risk Management
 
 
 ```{r pressure, echo=FALSE}
-hcmap(
-  "https://code.highcharts.com/mapdata/custom/world-lowres.js",
-  data = el,
+data(worldgeojson, package = "highcharter")
+
+
+highchart(type = "map") %>% hc_add_series_map(
+worldgeojson,
+  df = el,
   value = "freq",
-  joinBy = c("iso-a3", "ISO3"),
+  joinBy = c("iso3", "ISO3"),
   borderColor = "#FFFFFF",
   borderWidth = 0.35,
   color = 
