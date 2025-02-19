@@ -1,6 +1,6 @@
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-library(sharepointr)
+# library(sharepointr)
 library(tidyr)
 library(dplyr)
 library(plyr)
@@ -96,7 +96,7 @@ getdatasharepointlist <- function (con, listName = NULL, listID = NULL, expand =
 
 
 # CountryInfo <-  getdatasharepointlist(conn, listName = "Country List", listID = NULL, expand = F)
-CountryInfo <- read.csv("C:\\Users\\IEC\\Downloads\\Country List.csv")
+CountryInfo <- read.csv("C:\\Users\\IEC\\Downloads\\Country List (4).csv")
 
 
 CountryInfo <- as.data.frame(CountryInfo)
@@ -106,8 +106,8 @@ CountryInfo <- as.data.frame(CountryInfo)
 
 # elements <- getdatasharepointlist(conn, listName = "Project List", listID = NULL, expand = F)
 
-elements <- read.csv("C:\\Users\\IEC\\Downloads\\Project List.csv")
-Region <- read.csv("C:\\Users\\IEC\\Downloads\\Regions.csv")
+elements <- read.csv("C:\\Users\\IEC\\Downloads\\Project List (4).csv")
+Region <- read.csv("C:\\Users\\IEC\\Downloads\\Regions (4).csv")
 
 
 # elements0 <- elements %>% select(c("Ref No.", "Country / Group of Countries", "Categorization for website"))
